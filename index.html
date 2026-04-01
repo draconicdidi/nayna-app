@@ -380,9 +380,9 @@
 
   <p class="subhead">Every review on Nayna is tied to a real booking. No fake stars, no paid placement — just Austin's best beauty artists, ranked honestly.</p>
 
-  <div class="count-badge">
+  <div class="count-badge" id="countBadge">
     <div class="count-dot"></div>
-    <span>Founding members get 6 months free Pro</span>
+    <span id="countText">Founding members get 6 months free Pro</span>
   </div>
 
   <div class="pills">
@@ -512,6 +512,18 @@
     el.textContent = msg;
     el.classList.add('show');
   }
+
+  // Load live count
+  (async function loadCount() {
+    try {
+      const r = await fetch('https://nayna-backend-production.up.railway.app/waitlist/count');
+      const { count } = await r.json();
+      if (count > 0) {
+        document.getElementById('countText').textContent = 
+          count + ' ' + (count === 1 ? 'person has' : 'people have') + ' joined · 6 months free Pro for founders';
+      }
+    } catch(e) {}
+  })();
 
   // Enter key submits
   document.addEventListener('keydown', e => {

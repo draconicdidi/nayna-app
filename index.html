@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nayna — Join the Waitlist</title>
+<meta name="description" content="The verified beauty platform for Austin. Join the waitlist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-dim: rgba(201,168,76,.65);
+    --gold-glow: rgba(201,168,76,.12);
+    --ink: #F5E8D8;
+    --ink-dim: rgba(245,232,216,.45);
+    --ink-faint: rgba(245,232,216,.18);
+    --bg: #080507;
+    --bg2: #0e090c;
+    --border: rgba(201,168,76,.14);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Background texture ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 20%, rgba(201,168,76,.05) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 80% 80%, rgba(120,60,90,.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Grain overlay ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .6;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 0 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  /* ── Logo ── */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp .8s .1s forwards;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #1a0f14, #2a1820);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .logo-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: .04em;
+    color: var(--ink);
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--gold-dim);
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  /* ── Hero ── */
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp .8s .2s forwards;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 8vw, 58px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -.01em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp .8s .3s forwards;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .subhead {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-dim);
+    margin-bottom: 48px;
+    max-width: 400px;
+    opacity: 0;
+    animation: fadeUp .8s .4s forwards;
+  }
+
+  /* ── Pills ── */
+  .pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp .8s .45s forwards;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--ink-faint);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+
+  .pill-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* ── Form ── */
+  .form-card {
+    background: linear-gradient(135deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    animation: fadeUp .8s .5s forwards;
+  }
+
+  .form-label {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+  }
+
+  .role-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .role-btn {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--ink-faint);
+    background: transparent;
+    cursor: pointer;
+    text-align: center;
+    transition: all .2s;
+    color: var(--ink-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .role-btn:hover { border-color: rgba(201,168,76,.3); color: var(--ink); }
+
+  .role-btn.active {
+    border-color: var(--gold);
+    background: var(--gold-glow);
+    color: var(--ink);
+  }
+
+  .role-icon { display: block; font-size: 22px; margin-bottom: 5px; }
+  .role-title { display: block; font-weight: 500; font-size: 13px; }
+  .role-desc { display: block; font-size: 10px; color: var(--ink-faint); margin-top: 2px; }
+
+  .role-btn.active .role-desc { color: var(--gold-dim); }
+
+  .email-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .email-inp {
+    width: 100%;
+    background: rgba(255,255,255,.04);
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .email-inp::placeholder { color: rgba(245,232,216,.2); }
+  .email-inp:focus { border-color: var(--gold-dim); }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #C9A84C, #A8893E);
+    border: none;
+    border-radius: 12px;
+    padding: 17px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0e0903;
+    letter-spacing: .02em;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,.25); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* ── Success state ── */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .success-state.show { display: block; }
+  .form-content.hidden { display: none; }
+
+  .success-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    margin-bottom: 10px;
+  }
+
+  .success-sub {
+    font-size: 14px;
+    color: var(--ink-dim);
+    line-height: 1.6;
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: rgba(220,100,100,.8);
+    margin-top: 10px;
+    display: none;
+  }
+
+  .error-msg.show { display: block; }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 48px;
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp .8s .7s forwards;
+  }
+
+  /* ── Count badge ── */
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--gold-dim);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp .8s .25s forwards;
+  }
+
+  .count-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .3; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 60px 20px; }
+    .form-card { padding: 24px; }
+    .role-desc { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="logo">
+    <div class="logo-mark">N</div>
+    <div>
+      <div class="logo-name">Nayna</div>
+      <div class="logo-sub">Austin · Private beta</div>
+    </div>
+  </div>
+
+  <div class="eyebrow">Beauty, verified.</div>
+
+  <h1>Your next artist.<br><em>Scores you can trust.</em></h1>
+
+  <p class="subhead">Every review on Nayna is tied to a real booking. No fake stars, no paid placement — just Austin's best beauty artists, ranked honestly.</p>
+
+  <div class="count-badge">
+    <div class="count-dot"></div>
+    <span>Founding members get 6 months free Pro</span>
+  </div>
+
+  <div class="pills">
+    <div class="pill"><div class="pill-dot"></div>Verified reviews only</div>
+    <div class="pill"><div class="pill-dot"></div>Earn for every referral</div>
+    <div class="pill"><div class="pill-dot"></div>Austin-first launch</div>
+  </div>
+
+  <div class="form-card">
+
+    <div class="success-state" id="successState">
+      <span class="success-icon">✦</span>
+      <div class="success-title">You're on the list.</div>
+      <p class="success-sub">We'll reach out when Nayna opens in Austin.<br>Founding members get early access and 6 months free Pro.</p>
+    </div>
+
+    <div class="form-content" id="formContent">
+
+      <div class="form-label">I am a —</div>
+      <div class="role-row">
+        <button class="role-btn" data-role="client" onclick="selectRole('client', this)">
+          <span class="role-icon">🪞</span>
+          <span class="role-title">Client</span>
+          <span class="role-desc">I book beauty services</span>
+        </button>
+        <button class="role-btn" data-role="artist" onclick="selectRole('artist', this)">
+          <span class="role-icon">✂</span>
+          <span class="role-title">Artist</span>
+          <span class="role-desc">I am a beauty professional</span>
+        </button>
+      </div>
+
+      <div class="email-wrap">
+        <input
+          type="email"
+          class="email-inp"
+          id="emailInp"
+          placeholder="your@email.com"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+        Join the waitlist →
+      </button>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    Nayna is launching in Austin, TX.<br>
+    Your email is only used to notify you when access opens.
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://ftwndfuhweylmhovfehd.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ0d25kZnVod2V5bG1ob3ZmZWhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTMxNzgsImV4cCI6MjA5MDU2OTE3OH0.-_40DOnvpxemIk2t3AxcHlthY1PI96NxFtfCgKRyBY0';
+
+  let selectedRole = null;
+
+  function selectRole(role, el) {
+    selectedRole = role;
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  async function handleSubmit() {
+    const email = document.getElementById('emailInp').value.trim();
+    const btn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    errorMsg.classList.remove('show');
+
+    if (!selectedRole) {
+      showError('Please select whether you\'re a client or artist.');
+      return;
+    }
+    if (!email || !email.includes('@')) {
+      showError('Please enter a valid email address.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Joining...';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist_signups`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          email,
+          role: selectedRole,
+          city: 'Austin',
+          referral_source: document.referrer || 'direct'
+        })
+      });
+
+      if (res.status === 201) {
+        document.getElementById('formContent').classList.add('hidden');
+        document.getElementById('successState').classList.add('show');
+      } else if (res.status === 409) {
+        showError('You\'re already on the list! We\'ll be in touch.');
+        btn.disabled = false;
+        btn.textContent = 'Join the waitlist →';
+      } else {
+        throw new Error('signup failed');
+      }
+    } catch (e) {
+      showError('Something went wrong. Try again or email us directly.');
+      btn.disabled = false;
+      btn.textContent = 'Join the waitlist →';
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  // Enter key submits
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSubmit();
+  });
+</script>
+</body>
+</html>

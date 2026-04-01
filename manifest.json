@@ -1,0 +1,19 @@
+{
+  "name": "Nayna",
+  "short_name": "Nayna",
+  "description": "Your beauty, verified. Austin's trusted beauty platform.",
+  "start_url": "/demo",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070506",
+  "theme_color": "#070506",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    { "src": "/screenshots/feed.png", "sizes": "390x844", "type": "image/png", "form_factor": "narrow" }
+  ],
+  "prefer_related_applications": false
+}

@@ -527,14 +527,26 @@
     el.classList.add('show');
   }
 
-  // Load live count
-  (async function loadCount() {
+  // Load live stats
+  (async function loadStats() {
     try {
-      const r = await fetch('https://nayna-backend-production.up.railway.app/waitlist/count');
-      const { count } = await r.json();
+      const [countRes, statsRes] = await Promise.all([
+        fetch('https://nayna-backend-production.up.railway.app/waitlist/count'),
+        fetch('https://nayna-backend-production.up.railway.app/artists/stats'),
+      ]);
+      const { count } = await countRes.json();
+      const stats = await statsRes.json();
+
+      // Update count badge
       if (count > 0) {
-        document.getElementById('countText').textContent = 
+        document.getElementById('countText').textContent =
           count + ' ' + (count === 1 ? 'person has' : 'people have') + ' joined · 6 months free Pro for founders';
+      }
+
+      // Update pills with live artist stats
+      const pills = document.querySelectorAll('.pill');
+      if (pills[0] && stats.artistCount) {
+        pills[0].innerHTML = '<div class="pill-dot"></div>' + stats.artistCount + ' artists in Austin';
       }
     } catch(e) {}
   })();

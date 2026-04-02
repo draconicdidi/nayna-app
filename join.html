@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Join Nayna — Artist Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-dim:rgba(201,168,76,.6);--gold-glow:rgba(201,168,76,.08);--gold-border:rgba(201,168,76,.2);
+  --ink:#F5E8D8;--ink-dim:rgba(245,232,216,.55);--ink-faint:rgba(245,232,216,.22);
+  --bg:#070506;--card:rgba(255,255,255,.03);--border:rgba(255,255,255,.07);
+  --green:rgba(78,128,104,1);--green-light:rgba(100,200,150,.8);--err:#E87070;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;
+  background-image:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(201,168,76,.04),transparent)}
+.wrap{max-width:520px;margin:0 auto;padding:40px 24px 80px}
+
+/* Progress */
+.progress-bar{display:flex;align-items:center;gap:8px;margin-bottom:48px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
+.step-dot.done{background:var(--gold)}
+.step-dot.active{width:24px;border-radius:4px;background:var(--gold)}
+.progress-label{font-size:11px;color:var(--ink-faint);letter-spacing:.8px;text-transform:uppercase;margin-left:4px}
+
+/* Logo */
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.logo-box{width:40px;height:40px;border-radius:11px;background:#1A1208;border:1px solid var(--gold-border);
+  display:flex;align-items:center;justify-content:center}
+.logo-n{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)}
+.logo-text{font-size:16px;letter-spacing:4px;color:var(--gold);font-weight:300}
+
+/* Headings */
+.step-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;
+  color:var(--ink);margin-bottom:8px;line-height:1.15}
+.step-title em{font-style:italic;color:var(--gold)}
+.step-sub{font-size:14px;color:var(--ink-dim);margin-bottom:32px;line-height:1.65}
+
+/* Form elements */
+.field{margin-bottom:20px}
+.field-label{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--ink-faint);
+  font-weight:600;margin-bottom:8px;display:block}
+.field-input{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;
+  padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);
+  outline:none;transition:border-color .2s}
+.field-input:focus{border-color:var(--gold-border)}
+.field-input::placeholder{color:var(--ink-faint)}
+textarea.field-input{resize:vertical;min-height:80px;line-height:1.6}
+select.field-input{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(245,232,216,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center}
+
+/* Phone input */
+.phone-row{display:flex;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;
+  background:var(--card);transition:border-color .2s}
+.phone-row:focus-within{border-color:var(--gold-border)}
+.phone-cc{padding:14px 14px;border-right:1px solid var(--border);color:var(--ink-dim);
+  font-size:15px;white-space:nowrap;display:flex;align-items:center}
+.phone-input{flex:1;background:transparent;border:none;padding:14px 16px;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none}
+.phone-input::placeholder{color:var(--ink-faint)}
+
+/* OTP boxes */
+.otp-row{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+.otp-box{width:48px;height:58px;border-radius:12px;border:1.5px solid var(--border);
+  background:var(--card);text-align:center;font-size:22px;font-weight:600;color:var(--ink);
+  outline:none;transition:all .2s}
+.otp-box:focus{border-color:var(--gold-border);background:var(--gold-glow)}
+.otp-box.filled{border-color:rgba(201,168,76,.4);background:var(--gold-glow)}
+
+/* Profession grid */
+.prof-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.prof-card{padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;
+  background:var(--card);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px}
+.prof-card:hover{border-color:var(--gold-border);background:var(--gold-glow)}
+.prof-card.selected{border-color:var(--gold);background:var(--gold-glow)}
+.prof-icon{font-size:18px;width:28px;text-align:center}
+.prof-name{font-size:13px;font-weight:500;color:var(--ink)}
+
+/* CTA */
+.cta{width:100%;padding:16px;background:var(--gold);border:none;border-radius:13px;
+  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;color:#0E0A08;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(201,168,76,.25)}
+.cta:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(201,168,76,.35)}
+.cta:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.cta-ghost{width:100%;padding:14px;background:transparent;border:1.5px solid var(--border);
+  border-radius:13px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink-dim);
+  cursor:pointer;margin-top:10px;transition:border-color .2s}
+.cta-ghost:hover{border-color:rgba(255,255,255,.15);color:var(--ink)}
+
+/* Error */
+.err{font-size:12px;color:var(--err);margin-top:6px}
+.success-msg{font-size:12px;color:var(--green-light);margin-top:6px}
+
+/* Resend */
+.resend{text-align:center;margin-top:16px;font-size:13px;color:var(--ink-faint)}
+.resend a{color:var(--gold);cursor:pointer;text-decoration:none}
+
+/* Founding badge */
+.founding-badge{display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,168,76,.1);border:1px solid var(--gold-border);
+  border-radius:100px;padding:6px 14px;font-size:12px;color:var(--gold);
+  font-weight:500;margin-bottom:20px}
+
+/* Success screen */
+.success-screen{text-align:center;padding:40px 0}
+.success-icon{width:72px;height:72px;border-radius:20px;background:var(--gold-glow);
+  border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;font-size:28px}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;
+  color:var(--ink);margin-bottom:12px}
+.success-sub{font-size:14px;color:var(--ink-dim);line-height:1.7;margin-bottom:28px}
+.next-steps{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:24px;text-align:left;margin-bottom:28px}
+.next-step{display:flex;gap:12px;margin-bottom:16px}
+.next-step:last-child{margin-bottom:0}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--gold-glow);
+  border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;color:var(--gold);flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;color:var(--ink-dim);line-height:1.6}
+.step-text strong{color:var(--ink);font-weight:500}
+
+/* Spinner */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(0,0,0,.2);
+  border-top-color:#0E0A08;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Utils */
+.hidden{display:none!important}
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-box"><span class="logo-n">N</span></div>
+    <span class="logo-text">NAYNA</span>
+  </div>
+
+  <!-- Progress dots -->
+  <div class="progress-bar">
+    <div class="step-dot active" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+    <div class="step-dot" id="dot4"></div>
+    <span class="progress-label" id="progress-label">Step 1 of 4</span>
+  </div>
+
+  <!-- ══ STEP 1: Phone ══ -->
+  <div id="step1">
+    <div class="founding-badge">✦ Founding Artist · 6 months free Pro</div>
+    <h1 class="step-title">Join Nayna as a<br><em>founding artist.</em></h1>
+    <p class="step-sub">Austin's verified beauty platform is building its founding cohort. You get 6 months of Pro free, priority ranking, and a verified score from day one.</p>
+
+    <div class="field">
+      <label class="field-label">Mobile number</label>
+      <div class="phone-row" id="phone-row">
+        <span class="phone-cc">🇺🇸 +1</span>
+        <input class="phone-input" id="phone-inp" type="tel" placeholder="(512) 000-0000"
+          maxlength="14" oninput="fmtPhone(this)" onkeydown="if(event.key==='Enter')sendOTP()">
+      </div>
+      <div class="err hidden" id="phone-err"></div>
+    </div>
+
+    <button class="cta" id="send-btn" onclick="sendOTP()">Get verification code →</button>
+    <p style="font-size:11px;color:var(--ink-faint);text-align:center;margin-top:14px;line-height:1.6">
+      By continuing you agree to Nayna's
+      <a href="/terms" style="color:var(--gold-dim)">Terms of Service</a> and
+      <a href="/privacy" style="color:var(--gold-dim)">Privacy Policy</a>
+    </p>
+  </div>
+
+  <!-- ══ STEP 2: OTP ══ -->
+  <div id="step2" class="hidden">
+    <h1 class="step-title">Check your<br><em>phone.</em></h1>
+    <p class="step-sub" id="otp-sub">We sent a 6-digit code to your number.</p>
+
+    <div class="otp-row" id="otp-row">
+      <input class="otp-box" maxlength="1" type="tel" oninput="otpInput(this,0)" onkeydown="otpKey(event,0)" id="o0">
+      <input class="otp-box" maxlength="1" type="tel" oninput="otpInput(this,1)" onkeydown="otpKey(event,1)" id="o1">
+      <input class="otp-box" maxlength="1" type="tel" oninput="otpInput(this,2)" onkeydown="otpKey(event,2)" id="o2">
+      <input class="otp-box" maxlength="1" type="tel" oninput="otpInput(this,3)" onkeydown="otpKey(event,3)" id="o3">
+      <input class="otp-box" maxlength="1" type="tel" oninput="otpInput(this,4)" onkeydown="otpKey(event,4)" id="o4">
+      <input class="otp-box" maxlength="1" type="tel" oninput="otpInput(this,5)" onkeydown="otpKey(event,5)" id="o5">
+    </div>
+    <div class="err hidden" id="otp-err"></div>
+    <div class="resend">Didn't get it? <a onclick="resendOTP()">Resend code</a> <span id="resend-timer"></span></div>
+  </div>
+
+  <!-- ══ STEP 3: Profile ══ -->
+  <div id="step3" class="hidden">
+    <h1 class="step-title">Build your<br><em>profile.</em></h1>
+    <p class="step-sub">This is what clients see when they find you on Nayna. Make it count.</p>
+
+    <div class="field">
+      <label class="field-label">Your name</label>
+      <input class="field-input" id="display-name" type="text" placeholder="e.g. Sofia Reyes">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Profession</label>
+      <div class="prof-grid" id="prof-grid">
+        <div class="prof-card" onclick="selectProf('lash',this)"><span class="prof-icon">👁</span><span class="prof-name">Lash Artist</span></div>
+        <div class="prof-card" onclick="selectProf('brow',this)"><span class="prof-icon">✦</span><span class="prof-name">Brow Artist</span></div>
+        <div class="prof-card" onclick="selectProf('nail',this)"><span class="prof-icon">💅</span><span class="prof-name">Nail Tech</span></div>
+        <div class="prof-card" onclick="selectProf('hair',this)"><span class="prof-icon">✂</span><span class="prof-name">Hair Stylist</span></div>
+        <div class="prof-card" onclick="selectProf('aesthetician',this)"><span class="prof-icon">⊙</span><span class="prof-name">Aesthetician</span></div>
+        <div class="prof-card" onclick="selectProf('makeup',this)"><span class="prof-icon">◈</span><span class="prof-name">Makeup Artist</span></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Studio or business name</label>
+      <input class="field-input" id="studio-name" type="text" placeholder="e.g. Lash + Co Studio">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Bio <span style="color:var(--ink-faint);font-weight:400">(optional — 160 chars)</span></label>
+      <textarea class="field-input" id="bio" maxlength="160" placeholder="A short intro — your style, specialties, vibe…" oninput="bioCount()"></textarea>
+      <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;text-align:right" id="bio-count">0 / 160</div>
+    </div>
+
+    <div class="err hidden" id="profile-err"></div>
+    <button class="cta" onclick="saveProfile()">Continue →</button>
+  </div>
+
+  <!-- ══ STEP 4: Services ══ -->
+  <div id="step4" class="hidden">
+    <h1 class="step-title">Add your<br><em>services.</em></h1>
+    <p class="step-sub">Add at least one service so clients know what to book. You can always add more later.</p>
+
+    <div id="services-list"></div>
+
+    <button class="cta-ghost" onclick="addService()">+ Add a service</button>
+
+    <hr class="divider">
+    <div class="err hidden" id="services-err"></div>
+    <button class="cta" onclick="saveServices()" style="margin-top:8px">Complete setup →</button>
+    <button class="cta-ghost" onclick="skipServices()">Skip for now</button>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div id="step-success" class="hidden">
+    <div class="success-screen">
+      <div class="success-icon">✦</div>
+      <h2 class="success-title">You're in.</h2>
+      <p class="success-sub">
+        Welcome to Nayna, <strong id="success-name"></strong>.<br>
+        You've been added as a founding artist. Your profile is live and your 6 months of Pro has started.
+      </p>
+
+      <div class="next-steps">
+        <div class="next-step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Download the app</strong> — open nayna.app on your phone and tap Share → Add to Home Screen for the full experience.</div>
+        </div>
+        <div class="next-step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Share your link</strong> — your referral link lets clients book directly through you and earns you credits.</div>
+        </div>
+        <div class="next-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Log your first visit</strong> — after your next client visit, log it in the app to start collecting verified reviews.</div>
+        </div>
+      </div>
+
+      <a href="/demo" style="display:block">
+        <button class="cta">Open the app →</button>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://nayna-backend-production.up.railway.app';
+let state = { phone: '', token: '', userId: '', profession: '', resendTimer: null };
+
+// ── Phone formatting ─────────────────────────────────────
+function fmtPhone(el) {
+  const d = el.value.replace(/\D/g,'').slice(0,10);
+  if (d.length <= 3) el.value = d;
+  else if (d.length <= 6) el.value = `(${d.slice(0,3)}) ${d.slice(3)}`;
+  else el.value = `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+}
+
+function getDigits() {
+  return document.getElementById('phone-inp').value.replace(/\D/g,'');
+}
+
+// ── Step navigation ──────────────────────────────────────
+function goStep(n) {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('step'+i).classList.toggle('hidden', i !== n);
+    const dot = document.getElementById('dot'+i);
+    dot.classList.toggle('active', i === n);
+    dot.classList.toggle('done', i < n);
+  });
+  document.getElementById('step-success').classList.add('hidden');
+  document.getElementById('progress-label').textContent = `Step ${n} of 4`;
+  window.scrollTo(0,0);
+}
+
+function showSuccess() {
+  [1,2,3,4].forEach(i => document.getElementById('step'+i).classList.add('hidden'));
+  document.getElementById('step-success').classList.remove('hidden');
+  document.getElementById('progress-label').textContent = 'Complete ✓';
+  [1,2,3,4].forEach(i => {
+    const dot = document.getElementById('dot'+i);
+    dot.classList.remove('active');
+    dot.classList.add('done');
+  });
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+function clearErr(id) { document.getElementById(id).classList.add('hidden'); }
+
+// ── Step 1: Send OTP ────────────────────────────────────
+async function sendOTP() {
+  const digits = getDigits();
+  clearErr('phone-err');
+  if (digits.length !== 10) { showErr('phone-err','Please enter a valid 10-digit US number'); return; }
+  state.phone = '+1' + digits;
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const r = await fetch(`${API}/auth/send-otp`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone: state.phone })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Failed to send code');
+
+    document.getElementById('otp-sub').textContent =
+      `We sent a 6-digit code to ${document.getElementById('phone-inp').value}.`;
+    goStep(2);
+    document.getElementById('o0').focus();
+    startResendTimer();
+  } catch(e) {
+    showErr('phone-err', e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Get verification code →';
+  }
+}
+
+// ── Step 2: OTP ─────────────────────────────────────────
+function otpInput(el, idx) {
+  const v = el.value.replace(/\D/g,'');
+  // Handle paste
+  if (v.length > 1) {
+    const digits = v.slice(0,6);
+    for (let i = 0; i < 6; i++) {
+      const box = document.getElementById('o'+i);
+      box.value = digits[i] || '';
+      box.classList.toggle('filled', !!digits[i]);
+    }
+    const last = Math.min(5, digits.length - 1);
+    document.getElementById('o'+last).focus();
+    if (digits.length === 6) verifyOTP();
+    return;
+  }
+  el.value = v;
+  el.classList.toggle('filled', !!v);
+  if (v && idx < 5) document.getElementById('o'+(idx+1)).focus();
+  const code = [0,1,2,3,4,5].map(i => document.getElementById('o'+i).value).join('');
+  if (code.length === 6) verifyOTP();
+}
+
+function otpKey(e, idx) {
+  if (e.key === 'Backspace' && !document.getElementById('o'+idx).value && idx > 0) {
+    document.getElementById('o'+(idx-1)).focus();
+  }
+}
+
+async function verifyOTP() {
+  const code = [0,1,2,3,4,5].map(i => document.getElementById('o'+i).value).join('');
+  if (code.length !== 6) return;
+  clearErr('otp-err');
+
+  try {
+    const r = await fetch(`${API}/auth/verify-otp`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone: state.phone, code, role: 'artist' })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Invalid code');
+
+    state.token = d.token;
+    state.userId = d.user?.id;
+    goStep(3);
+  } catch(e) {
+    showErr('otp-err', e.message);
+    [0,1,2,3,4,5].forEach(i => {
+      const b = document.getElementById('o'+i);
+      b.value = ''; b.classList.remove('filled');
+    });
+    document.getElementById('o0').focus();
+  }
+}
+
+function startResendTimer() {
+  let t = 30;
+  const el = document.getElementById('resend-timer');
+  el.textContent = `(${t}s)`;
+  clearInterval(state.resendTimer);
+  state.resendTimer = setInterval(() => {
+    t--;
+    if (t <= 0) { el.textContent = ''; clearInterval(state.resendTimer); }
+    else el.textContent = `(${t}s)`;
+  }, 1000);
+}
+
+async function resendOTP() {
+  if (document.getElementById('resend-timer').textContent) return;
+  await sendOTPSilent();
+  startResendTimer();
+}
+
+async function sendOTPSilent() {
+  await fetch(`${API}/auth/send-otp`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ phone: state.phone })
+  });
+}
+
+// ── Step 3: Profile ────────────────────────────────────
+function selectProf(key, el) {
+  document.querySelectorAll('.prof-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.profession = key;
+}
+
+function bioCount() {
+  const v = document.getElementById('bio').value;
+  document.getElementById('bio-count').textContent = `${v.length} / 160`;
+}
+
+async function saveProfile() {
+  const name = document.getElementById('display-name').value.trim();
+  const studio = document.getElementById('studio-name').value.trim();
+  const bio = document.getElementById('bio').value.trim();
+  clearErr('profile-err');
+
+  if (!name) { showErr('profile-err','Please enter your name'); return; }
+  if (!state.profession) { showErr('profile-err','Please select your profession'); return; }
+  if (!studio) { showErr('profile-err','Please enter your studio or business name'); return; }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    // Update user profile
+    const r = await fetch(`${API}/users/me`, {
+      method:'PATCH', headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.token}`},
+      body: JSON.stringify({ display_name: name, bio, city: 'Austin' })
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.error || 'Profile save failed'); }
+
+    // Create artist profile
+    const r2 = await fetch(`${API}/artists/profile`, {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.token}`},
+      body: JSON.stringify({ profession: state.profession, studio_name: studio, bio, city: 'Austin', is_founding: true })
+    });
+    // Non-fatal if artist profile already exists
+
+    state.displayName = name;
+    goStep(4);
+    addService(); // Add a blank service to start
+  } catch(e) {
+    showErr('profile-err', e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Continue →';
+  }
+}
+
+// ── Step 4: Services ───────────────────────────────────
+let serviceCount = 0;
+
+function addService() {
+  serviceCount++;
+  const id = serviceCount;
+  const div = document.createElement('div');
+  div.id = `svc-${id}`;
+  div.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px';
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span style="font-size:13px;font-weight:500;color:var(--ink)">Service ${id}</span>
+      ${id > 1 ? `<span onclick="document.getElementById('svc-${id}').remove()" style="font-size:12px;color:var(--ink-faint);cursor:pointer">✕ Remove</span>` : ''}
+    </div>
+    <div class="field" style="margin-bottom:12px">
+      <label class="field-label">Service name</label>
+      <input class="field-input" id="svc-name-${id}" type="text" placeholder="e.g. Classic lash set">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <label class="field-label">Price ($)</label>
+        <input class="field-input" id="svc-price-${id}" type="number" placeholder="85" min="0">
+      </div>
+      <div>
+        <label class="field-label">Duration (min)</label>
+        <input class="field-input" id="svc-dur-${id}" type="number" placeholder="90" min="15" step="15">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label class="field-label">Description <span style="color:var(--ink-faint);font-weight:400">(optional)</span></label>
+      <input class="field-input" id="svc-desc-${id}" type="text" placeholder="Brief description…">
+    </div>`;
+  document.getElementById('services-list').appendChild(div);
+}
+
+async function saveServices() {
+  clearErr('services-err');
+  const services = [];
+  for (let i = 1; i <= serviceCount; i++) {
+    const nameEl = document.getElementById(`svc-name-${i}`);
+    if (!nameEl) continue;
+    const name = nameEl.value.trim();
+    if (!name) continue;
+    services.push({
+      name,
+      price: parseFloat(document.getElementById(`svc-price-${i}`).value) || null,
+      duration_min: parseInt(document.getElementById(`svc-dur-${i}`).value) || null,
+      description: document.getElementById(`svc-desc-${i}`).value.trim() || null,
+    });
+  }
+
+  if (!services.length) { showErr('services-err','Add at least one service'); return; }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    for (const svc of services) {
+      await fetch(`${API}/artists/services`, {
+        method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${state.token}`},
+        body: JSON.stringify(svc)
+      });
+    }
+    document.getElementById('success-name').textContent = state.displayName || 'there';
+    showSuccess();
+  } catch(e) {
+    showErr('services-err', e.message);
+    btn.disabled = false;
+    btn.textContent = 'Complete setup →';
+  }
+}
+
+function skipServices() {
+  document.getElementById('success-name').textContent = state.displayName || 'there';
+  showSuccess();
+}
+</script>
+</body>
+</html>

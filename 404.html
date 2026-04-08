@@ -3,17 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nayna — Not Found</title>
+<title>Nayna</title>
+<script>
+(function() {
+  var path = window.location.pathname;
+  var hash = window.location.hash;
+
+  var atMatch = path.match(/^\/@([a-zA-Z0-9_.-]+)\/?$/);
+  if (atMatch) { window.location.replace('/artist?u=' + atMatch[1] + hash); return; }
+
+  var artistMatch = path.match(/^\/artist\/([a-zA-Z0-9_.-]+)\/?$/);
+  if (artistMatch) { window.location.replace('/artist?u=' + artistMatch[1] + hash); return; }
+
+  var profileMatch = path.match(/^\/p\/([a-zA-Z0-9-]+)\/?$/);
+  if (profileMatch) { window.location.replace('/artist?id=' + profileMatch[1] + hash); return; }
+
+  document.querySelector('html').style.display = 'block';
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #080507; color: rgba(245,232,216,.5); font-family: 'DM Sans', sans-serif;
-         min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
-  .logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #C9A84C; letter-spacing: .06em; margin-bottom: 32px; }
-  h1 { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300; color: rgba(245,232,216,.2); margin-bottom: 16px; }
-  p { font-size: 14px; margin-bottom: 28px; }
-  a { color: #C9A84C; text-decoration: none; font-size: 14px; }
-  a:hover { opacity: .7; }
+  html{display:none}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#080507;color:rgba(245,232,216,.5);font-family:'DM Sans',sans-serif;
+       min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:22px;color:#C9A84C;letter-spacing:.06em;margin-bottom:32px}
+  h1{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:rgba(245,232,216,.2);margin-bottom:16px}
+  p{font-size:14px;margin-bottom:28px}
+  a{color:#C9A84C;text-decoration:none;font-size:14px}
+  a:hover{opacity:.7}
 </style>
 </head>
 <body>

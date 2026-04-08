@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Nayna</title>
+<meta name="description" content="Verified beauty artist on Nayna — Austin's trusted beauty platform.">
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Nayna">
+<meta property="og:image" content="https://nayna.app/icons/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --gold:#C9A84C;
+  --gold-dim:rgba(201,168,76,.55);
+  --gold-faint:rgba(201,168,76,.12);
+  --ink:#F5E8D8;
+  --ink-dim:rgba(245,232,216,.6);
+  --ink-faint:rgba(245,232,216,.18);
+  --bg:#070506;
+  --bg-card:rgba(255,255,255,.028);
+  --bg-card-hover:rgba(255,255,255,.045);
+  --border:rgba(201,168,76,.1);
+  --border-subtle:rgba(255,255,255,.06);
+}
+
+html{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── Grain overlay ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.6;
+}
+
+/* ── Layout ── */
+.page{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:0 20px 80px}
+
+/* ── Top bar ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 0 24px;border-bottom:1px solid var(--border);margin-bottom:36px;
+}
+.wordmark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:var(--gold);text-decoration:none}
+.dl-btn{
+  background:var(--gold);color:#0a0507;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  letter-spacing:.04em;padding:8px 18px;border-radius:100px;text-decoration:none;
+  transition:opacity .15s;white-space:nowrap;
+}
+.dl-btn:hover{opacity:.88}
+
+/* ── Loading / error ── */
+.state{text-align:center;padding:80px 0;color:var(--ink-dim);font-size:14px}
+.state-icon{font-size:32px;margin-bottom:16px;display:block}
+
+/* ── Hero ── */
+.hero{display:flex;gap:20px;align-items:flex-start;margin-bottom:28px}
+
+.avatar-wrap{position:relative;flex-shrink:0}
+.avatar{
+  width:88px;height:88px;border-radius:50%;object-fit:cover;
+  border:1.5px solid var(--border);background:var(--bg-card);
+  display:block;
+}
+.avatar-placeholder{
+  width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));
+  border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--gold-dim);flex-shrink:0;
+}
+.pro-dot{
+  position:absolute;bottom:4px;right:4px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--gold);border:2px solid var(--bg);
+}
+
+.hero-text{flex:1;min-width:0}
+.name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;line-height:1.2;margin-bottom:3px}
+.handle{font-size:12px;color:var(--ink-faint);margin-bottom:8px}
+.profession{font-size:13px;color:var(--gold-dim);margin-bottom:10px;letter-spacing:.02em}
+
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{
+  font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 10px;border-radius:100px;border:1px solid var(--border);
+  color:var(--ink-dim);
+}
+.badge-founding{border-color:var(--gold-dim);color:var(--gold-dim)}
+
+/* ── Score ── */
+.score-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  padding:24px;margin-bottom:20px;
+  display:flex;align-items:center;gap:24px;
+}
+.score-num{
+  font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;
+  color:var(--gold);line-height:1;letter-spacing:-.02em;
+  flex-shrink:0;
+}
+.score-right{flex:1}
+.score-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+.score-desc{font-size:13px;color:var(--ink-dim);line-height:1.5}
+.score-stats{display:flex;gap:20px;margin-top:10px}
+.stat-item{font-size:12px;color:var(--ink-faint)}
+.stat-item strong{color:var(--ink-dim);font-weight:400}
+
+.score-bars{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.bar-row{display:flex;align-items:center;gap:8px}
+.bar-label{font-size:11px;color:var(--ink-faint);width:72px;flex-shrink:0}
+.bar-track{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .6s cubic-bezier(.16,1,.3,1)}
+
+/* ── Bio ── */
+.bio{font-size:14px;color:var(--ink-dim);line-height:1.7;margin-bottom:24px;padding:0 4px}
+
+/* ── Section ── */
+.section-title{
+  font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;
+  color:var(--ink-dim);letter-spacing:.04em;
+  margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border-subtle);
+}
+
+/* ── Services ── */
+.services{margin-bottom:28px}
+.service-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border-subtle);gap:12px;
+}
+.service-item:last-child{border-bottom:none}
+.service-name{font-size:14px;color:var(--ink)}
+.service-meta{font-size:12px;color:var(--ink-faint);margin-top:2px}
+.service-price{font-size:14px;color:var(--gold);flex-shrink:0}
+
+/* ── Reviews ── */
+.reviews{margin-bottom:32px}
+.review-item{
+  background:var(--bg-card);border:1px solid var(--border-subtle);
+  border-radius:12px;padding:16px;margin-bottom:10px;
+}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.reviewer{font-size:12px;color:var(--ink-faint)}
+.review-score{
+  display:flex;align-items:center;gap:4px;
+  font-size:12px;color:var(--gold);
+}
+.review-body{font-size:13px;color:var(--ink-dim);line-height:1.6}
+
+/* ── Empty reviews ── */
+.no-reviews{font-size:13px;color:var(--ink-faint);padding:20px 0;text-align:center}
+
+/* ── CTA ── */
+.cta-block{
+  background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.03));
+  border:1px solid var(--border);border-radius:16px;
+  padding:28px 24px;text-align:center;
+}
+.cta-eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:8px}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:6px}
+.cta-sub{font-size:13px;color:var(--ink-dim);margin-bottom:20px;line-height:1.5}
+.cta-main{
+  display:inline-block;background:var(--gold);color:#0a0507;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  padding:14px 32px;border-radius:100px;text-decoration:none;
+  letter-spacing:.02em;transition:opacity .15s;
+}
+.cta-main:hover{opacity:.88}
+.cta-note{font-size:11px;color:var(--ink-faint);margin-top:12px}
+
+/* ── Footer ── */
+.footer{
+  margin-top:40px;padding-top:24px;border-top:1px solid var(--border-subtle);
+  font-size:12px;color:var(--ink-faint);display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:8px;
+}
+.footer a{color:var(--gold-dim);text-decoration:none}
+.footer a:hover{color:var(--gold)}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both}
+.animate-d1{animation-delay:.05s}
+.animate-d2{animation-delay:.12s}
+.animate-d3{animation-delay:.2s}
+.animate-d4{animation-delay:.28s}
+.animate-d5{animation-delay:.36s}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a href="/" class="wordmark">NAYNA</a>
+    <a href="https://testflight.apple.com/join/MCFjeUtN" target="_blank" class="dl-btn">Download the app →</a>
+  </div>
+
+  <!-- Content injected by JS -->
+  <div id="root">
+    <div class="state">
+      <span class="state-icon">✦</span>
+      Loading profile…
+    </div>
+  </div>
+
+  <footer class="footer" id="footer" style="display:none">
+    <span>© 2026 Nayna, Inc. · Austin, TX</span>
+    <span>
+      <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+      <a href="/terms">Terms</a>
+    </span>
+  </footer>
+
+</div>
+
+<script>
+const API = 'https://nayna-backend-production.up.railway.app';
+
+function scoreLabel(s) {
+  if (!s) return 'Unrated';
+  if (s >= 9.5) return 'Exceptional';
+  if (s >= 9.0) return 'Outstanding';
+  if (s >= 8.5) return 'Excellent';
+  if (s >= 8.0) return 'Very Good';
+  if (s >= 7.0) return 'Good';
+  return 'Developing';
+}
+
+function timeAgo(iso) {
+  const d = new Date(iso), now = new Date();
+  const days = Math.floor((now - d) / 86400000);
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 30) return `${days} days ago`;
+  if (days < 365) return `${Math.floor(days/30)} months ago`;
+  return `${Math.floor(days/365)} years ago`;
+}
+
+function stars(score) {
+  if (!score) return '';
+  const filled = Math.round(score);
+  return '★'.repeat(filled) + '☆'.repeat(10 - filled);
+}
+
+function renderProfile(a) {
+  const initials = (a.display_name || a.username || '?').charAt(0).toUpperCase();
+  const location = [a.city, a.state].filter(Boolean).join(', ');
+
+  const avatar = a.avatar_url
+    ? `<img src="${a.avatar_url}" class="avatar" alt="${a.display_name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      + `<div class="avatar-placeholder" style="display:none">${initials}</div>`
+    : `<div class="avatar-placeholder">${initials}</div>`;
+
+  const proDot = a.is_pro ? `<div class="pro-dot" title="Nayna Pro"></div>` : '';
+
+  const badges = [];
+  if (a.is_founding) badges.push(`<span class="badge badge-founding">Founding Artist</span>`);
+  if (a.is_pro) badges.push(`<span class="badge">Pro</span>`);
+  if (location) badges.push(`<span class="badge">${location}</span>`);
+
+  // Score bars — only show if we have a score
+  let scoreBars = '';
+  if (a.reviews?.length > 0) {
+    const avgStat = (key) => {
+      const vals = a.reviews.map(r => r[key] || r.score).filter(Boolean);
+      return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
+    };
+    const dims = [
+      { label: 'Skill', val: avgStat('score_skill') },
+      { label: 'Comms', val: avgStat('score_comms') },
+      { label: 'Timing', val: avgStat('score_timing') },
+      { label: 'Value', val: avgStat('score_value') },
+    ].filter(d => d.val);
+    if (dims.length) {
+      scoreBars = `<div class="score-bars">${dims.map(d =>
+        `<div class="bar-row">
+          <span class="bar-label">${d.label}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${d.val*10}%"></div></div>
+          <span style="font-size:11px;color:var(--ink-faint);width:24px;text-align:right">${d.val}</span>
+        </div>`
+      ).join('')}</div>`;
+    }
+  }
+
+  // Services
+  let servicesHtml = '';
+  if (a.services?.length) {
+    servicesHtml = `
+    <div class="services animate animate-d3">
+      <div class="section-title">Services</div>
+      ${a.services.map(s => `
+        <div class="service-item">
+          <div>
+            <div class="service-name">${s.name}</div>
+            ${s.duration ? `<div class="service-meta">${s.duration}</div>` : ''}
+          </div>
+          ${s.price ? `<div class="service-price">${s.price}</div>` : ''}
+        </div>`
+      ).join('')}
+    </div>`;
+  }
+
+  // Reviews
+  const reviewsHtml = `
+  <div class="reviews animate animate-d4">
+    <div class="section-title">Verified Reviews (${a.review_count})</div>
+    ${a.reviews?.length ? a.reviews.map(r => `
+      <div class="review-item">
+        <div class="review-header">
+          <span class="reviewer">${r.reviewer_name} · ${timeAgo(r.created_at)}</span>
+          <span class="review-score">★ ${r.score?.toFixed(1) || '—'}</span>
+        </div>
+        ${r.body ? `<div class="review-body">${r.body}</div>` : ''}
+      </div>`
+    ).join('') : `<div class="no-reviews">No reviews yet — be the first to book.</div>`}
+  </div>`;
+
+  const scoreDisplay = a.nayna_score
+    ? `<div class="score-num">${a.nayna_score.toFixed(1)}</div>`
+    : `<div class="score-num" style="font-size:32px;color:var(--ink-faint)">—</div>`;
+
+  document.getElementById('root').innerHTML = `
+    <div class="hero animate animate-d1">
+      <div class="avatar-wrap">${avatar}${proDot}</div>
+      <div class="hero-text">
+        <div class="name">${a.display_name || a.username || 'Artist'}</div>
+        ${a.username ? `<div class="handle">@${a.username}</div>` : ''}
+        <div class="profession">${a.profession_label || a.profession || 'Beauty Artist'}</div>
+        ${badges.length ? `<div class="badges">${badges.join('')}</div>` : ''}
+      </div>
+    </div>
+
+    <div class="score-card animate animate-d2">
+      ${scoreDisplay}
+      <div class="score-right">
+        <div class="score-label">Nayna Score</div>
+        <div class="score-desc">${scoreLabel(a.nayna_score)} · based on ${a.review_count} verified review${a.review_count !== 1 ? 's' : ''}</div>
+        <div class="score-stats">
+          ${a.booking_count ? `<div class="stat-item"><strong>${a.booking_count}</strong> bookings</div>` : ''}
+          ${a.studio_name ? `<div class="stat-item"><strong>${a.studio_name}</strong></div>` : ''}
+        </div>
+        ${scoreBars}
+      </div>
+    </div>
+
+    ${a.bio ? `<div class="bio animate animate-d2">${a.bio}</div>` : ''}
+
+    ${servicesHtml}
+    ${reviewsHtml}
+
+    <div class="cta-block animate animate-d5">
+      <div class="cta-eyebrow">Book on Nayna</div>
+      <div class="cta-title">Every review is verified.</div>
+      <div class="cta-sub">Nayna connects you with Austin's best beauty artists — backed by real, booking-verified reviews. No fake stars.</div>
+      <a href="https://testflight.apple.com/join/MCFjeUtN" target="_blank" class="cta-main">Download Nayna — iOS Beta</a>
+      <div class="cta-note">Free download · TestFlight required · iOS only for now</div>
+    </div>
+  `;
+
+  // Update page meta
+  document.title = `${a.display_name || a.username} — Nayna`;
+  document.querySelector('meta[name="description"]').content =
+    `${a.display_name || a.username} · ${a.profession_label} · Nayna Score ${a.nayna_score?.toFixed(1) || '—'} · ${a.review_count} verified reviews`;
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
+
+  document.getElementById('footer').style.display = 'flex';
+
+  // Animate bars after render
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0';
+      requestAnimationFrame(() => { el.style.width = w; });
+    });
+  }, 300);
+}
+
+function renderError(msg) {
+  document.getElementById('root').innerHTML = `
+    <div class="state">
+      <span class="state-icon">✦</span>
+      ${msg || 'Artist not found.'}
+      <br><br>
+      <a href="/" style="color:var(--gold-dim);font-size:13px">Back to Nayna →</a>
+    </div>`;
+}
+
+async function load() {
+  const params = new URLSearchParams(location.search);
+  const username = params.get('u') || params.get('username');
+  const profileId = params.get('id') || params.get('profile_id');
+
+  if (!username && !profileId) {
+    renderError('No artist specified.');
+    return;
+  }
+
+  try {
+    const url = username
+      ? `${API}/artists/by-username/${encodeURIComponent(username)}`
+      : `${API}/artists/${encodeURIComponent(profileId)}`;
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Not found');
+    const data = await res.json();
+    renderProfile(data);
+  } catch(e) {
+    renderError('Artist not found.');
+  }
+}
+
+load();
+</script>
+</body>
+</html>

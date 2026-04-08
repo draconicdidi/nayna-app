@@ -189,6 +189,12 @@ body::before{
 .animate-d3{animation-delay:.2s}
 .animate-d4{animation-delay:.28s}
 .animate-d5{animation-delay:.36s}
+
+/* ── Review photos ── */
+.review-photos { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.review-photo  { width:80px; height:80px; border-radius:8px; object-fit:cover;
+                 border:1px solid var(--border-subtle); cursor:pointer; transition:opacity .15s; }
+.review-photo:hover { opacity:.85; }
 </style>
 </head>
 <body>
@@ -316,6 +322,11 @@ function renderProfile(a) {
           <span class="review-score">★ ${r.score?.toFixed(1) || '—'}</span>
         </div>
         ${r.body ? `<div class="review-body">${r.body}</div>` : ''}
+        ${r.photos?.length ? `
+          <div class="review-photos">
+            ${r.photos.map(url => `<img class="review-photo" src="${url}" alt="Review photo" loading="lazy"
+              onclick="window.open('${url}', '_blank')">`).join('')}
+          </div>` : ''}
       </div>`
     ).join('') : `<div class="no-reviews">No reviews yet — be the first to book.</div>`}
   </div>`;

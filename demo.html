@@ -2,14 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#070506">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Nayna">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Nayna — Interactive Demo v3</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -4359,12 +4351,299 @@ function animateRingIn() {
   }, 100);
 }
 </script>
+
+<!-- ──────────────────────────────────────────────────────────────────
+     NAYNA DEMO: Members search, FollowList, MemberProfile (mock data)
+     Self-contained additive feature. No edits to existing markup.
+     ────────────────────────────────────────────────────────────────── -->
+<style>
+  /* Discover Members mode toggle (injected into top of #sc-discover) */
+  .ds-mode { display:flex; gap:0; margin:0 14px 8px; padding:4px; background:rgba(196,79,122,.07); border:1px solid rgba(196,79,122,.12); border-radius:14px; }
+  .ds-mode-btn { flex:1; padding:9px 0; border:0; background:transparent; color:rgba(245,232,216,.55); font-weight:700; font-size:13px; letter-spacing:.3px; border-radius:11px; cursor:pointer; }
+  .ds-mode-btn.on { background:#C44F7A; color:#FDFAF8; }
+  #sc-discover[data-ds-mode="members"] > *:not(.ds-mode):not(.ds-members) { display:none !important; }
+  .ds-members { padding:0 0 80px; }
+  .ds-members-search-wrap { display:flex; align-items:center; margin:0 14px 12px; padding:0 12px; height:42px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:21px; gap:8px; }
+  .ds-members-search-wrap input { flex:1; background:transparent; border:0; color:#F5E8D8; font-size:14px; outline:none; }
+  .ds-members-search-wrap input::placeholder { color:rgba(245,232,216,.4); }
+  .ds-section-title { font-size:13px; font-weight:700; color:#F5E8D8; padding:14px 14px 8px; letter-spacing:.3px; }
+  /* Member card */
+  .mc { display:flex; align-items:center; gap:12px; margin:0 14px 10px; padding:12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:16px; cursor:pointer; }
+  .mc-av { width:48px; height:48px; border-radius:24px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#FDFAF8; font-weight:700; font-size:16px; font-family:Georgia,serif; }
+  .mc-info { flex:1; min-width:0; }
+  .mc-name-row { display:flex; align-items:center; gap:6px; }
+  .mc-name { font-size:14px; font-weight:700; color:#F5E8D8; }
+  .mc-badge { font-size:9px; font-weight:700; color:#C9A84C; letter-spacing:.4px; padding:2px 6px; background:rgba(201,168,76,.15); border-radius:6px; }
+  .mc-handle { font-size:12px; color:rgba(245,232,216,.5); margin-top:1px; }
+  .mc-meta { font-size:11px; color:rgba(245,232,216,.4); margin-top:2px; }
+  .mc-follow { padding:7px 14px; border-radius:18px; background:#C44F7A; color:#FDFAF8; font-size:12px; font-weight:700; border:0; cursor:pointer; }
+  .mc-follow.on { background:rgba(196,79,122,.1); color:#C44F7A; border:1px solid rgba(196,79,122,.25); }
+  /* FollowList screen */
+  #sc-follow-list .fl-header { display:flex; align-items:center; padding:8px 12px 4px; }
+  #sc-follow-list .fl-back { width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:transparent; border:0; color:#F5E8D8; font-size:22px; cursor:pointer; }
+  #sc-follow-list .fl-title { flex:1; text-align:center; font-size:16px; font-weight:700; color:#F5E8D8; padding-right:36px; }
+  #sc-follow-list .fl-tabs { display:flex; gap:0; margin:8px 14px 4px; padding:4px; background:rgba(196,79,122,.07); border:1px solid rgba(196,79,122,.12); border-radius:14px; }
+  #sc-follow-list .fl-tab { flex:1; padding:9px 0; border:0; background:transparent; color:rgba(245,232,216,.55); font-weight:700; font-size:13px; border-radius:11px; cursor:pointer; }
+  #sc-follow-list .fl-tab.on { background:#C44F7A; color:#FDFAF8; }
+  #sc-follow-list .fl-list { padding:8px 0 80px; overflow-y:auto; }
+  /* MemberProfile screen */
+  #sc-member-profile .mp-header { display:flex; align-items:center; padding:8px 12px 4px; }
+  #sc-member-profile .mp-back { width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:transparent; border:0; color:#F5E8D8; font-size:22px; cursor:pointer; }
+  #sc-member-profile .mp-htitle { flex:1; text-align:center; font-size:14px; font-weight:600; color:rgba(245,232,216,.7); padding-right:36px; }
+  #sc-member-profile .mp-hero { text-align:center; padding:8px 24px 18px; }
+  #sc-member-profile .mp-av { width:88px; height:88px; border-radius:44px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; color:#FDFAF8; font-weight:700; font-size:28px; font-family:Georgia,serif; box-shadow:0 0 0 4px rgba(201,168,76,.18); }
+  #sc-member-profile .mp-name-row { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
+  #sc-member-profile .mp-name { font-size:22px; font-weight:700; color:#F5E8D8; }
+  #sc-member-profile .mp-handle { font-size:13px; color:rgba(245,232,216,.5); }
+  #sc-member-profile .mp-meta { font-size:12px; color:rgba(245,232,216,.4); margin-top:4px; }
+  #sc-member-profile .mp-bio { font-size:13px; color:#F5E8D8; line-height:1.5; margin-top:12px; }
+  #sc-member-profile .mp-actions { display:flex; gap:10px; justify-content:center; margin-top:18px; }
+  #sc-member-profile .mp-fbtn { padding:10px 28px; border-radius:22px; background:#C44F7A; color:#FDFAF8; font-size:14px; font-weight:700; border:0; cursor:pointer; }
+  #sc-member-profile .mp-fbtn.on { background:rgba(196,79,122,.1); color:#C44F7A; border:1px solid rgba(196,79,122,.25); }
+  #sc-member-profile .mp-vbtn { padding:10px 18px; border-radius:22px; background:rgba(201,168,76,.15); color:#C9A84C; font-size:14px; font-weight:700; border:1px solid rgba(201,168,76,.3); cursor:pointer; }
+  #sc-member-profile .mp-stats { display:flex; align-items:center; margin:14px; padding:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:16px; }
+  #sc-member-profile .mp-stat { flex:1; text-align:center; cursor:pointer; }
+  #sc-member-profile .mp-stat-v { font-size:18px; font-weight:700; color:#F5E8D8; }
+  #sc-member-profile .mp-stat-l { font-size:10px; font-weight:700; color:rgba(245,232,216,.5); letter-spacing:.5px; margin-top:2px; }
+  #sc-member-profile .mp-divider { width:1px; height:28px; background:rgba(196,79,122,.12); }
+  .ds-empty { text-align:center; padding:60px 32px; }
+  .ds-empty-t { font-size:16px; font-weight:700; color:#F5E8D8; margin-bottom:6px; }
+  .ds-empty-h { font-size:13px; color:rgba(245,232,216,.5); line-height:1.5; }
+</style>
+
+<div id="sc-follow-list" class="screen">
+  <div class="fl-header">
+    <button class="fl-back" onclick="S('sc-profile')">←</button>
+    <div class="fl-title" id="fl-title">Following</div>
+  </div>
+  <div class="fl-tabs">
+    <button class="fl-tab" data-flmode="friends">Friends</button>
+    <button class="fl-tab" data-flmode="following">Following</button>
+    <button class="fl-tab" data-flmode="followers">Followers</button>
+  </div>
+  <div class="fl-list" id="fl-list"></div>
+</div>
+
+<div id="sc-member-profile" class="screen">
+  <div class="mp-header">
+    <button class="mp-back" onclick="S('sc-follow-list')">←</button>
+    <div class="mp-htitle" id="mp-htitle">@user</div>
+  </div>
+  <div class="mp-hero" id="mp-hero"></div>
+  <div class="mp-stats" id="mp-stats"></div>
+</div>
+
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
+(function(){
+  const MEMBERS = [
+    { id:'u1',  display_name:'Maya Krishnan',     username:'maya.k',         city:'Austin, TX',   role:'artist', primary_profile_id:'p1',  is_following:true,  bio:'Hand-poked tattoo. Botanical, fine line. By appointment.' },
+    { id:'u2',  display_name:'Priya Singh',       username:'priyaink',       city:'Austin, TX',   role:'artist', primary_profile_id:'p2',  is_following:true,  bio:'Color realism. East Side Studio.' },
+    { id:'u3',  display_name:'Ana Rodr\u00edguez',     username:'ana.rd',         city:'Houston, TX',  role:'client', primary_profile_id:null,  is_following:true,  bio:'Tattoo nerd, plant mom, weekend potter.' },
+    { id:'u4',  display_name:'Selene Park',       username:'selenepark',     city:'Austin, TX',   role:'artist', primary_profile_id:'p3',  is_following:true,  bio:'Henna & ornamental. DM for festival rates.' },
+    { id:'u5',  display_name:'Jordan Beck',       username:'jbeck',          city:'Dallas, TX',   role:'client', primary_profile_id:null,  is_following:false, bio:'Always in for the next sleeve session.' },
+    { id:'u6',  display_name:'Camille Foster',    username:'camille.f',      city:'Austin, TX',   role:'artist', primary_profile_id:'p4',  is_following:true,  bio:'Black & grey portraits. South Lamar.' },
+    { id:'u7',  display_name:'Devi Patel',        username:'devip',          city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false, bio:'Saving spots for my dream artists.' },
+    { id:'u8',  display_name:'Hana Yamada',       username:'hana.draws',     city:'Austin, TX',   role:'artist', primary_profile_id:'p5',  is_following:true,  bio:'Watercolor + neo-traditional.' },
+    { id:'u9',  display_name:'Renata Costa',      username:'renata.c',       city:'San Antonio',  role:'client', primary_profile_id:null,  is_following:false },
+    { id:'u10', display_name:'Sage Liu',          username:'sageliu',        city:'Austin, TX',   role:'artist', primary_profile_id:'p6',  is_following:true,  bio:'Geometric, dotwork, sacred.' },
+    { id:'u11', display_name:'Iris Kelly',        username:'iris.k',         city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false },
+    { id:'u12', display_name:'Naomi Brooks',      username:'naomib',         city:'Houston, TX',  role:'artist', primary_profile_id:'p7',  is_following:false, bio:'Lettering specialist. Single needle.' },
+    { id:'u13', display_name:'Theo Castillo',     username:'theo.cstllo',    city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:true },
+    { id:'u14', display_name:'Bea Holloway',      username:'beaholl',        city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false },
+    { id:'u15', display_name:'Lila Wen',          username:'lilawen',        city:'Austin, TX',   role:'artist', primary_profile_id:'p8',  is_following:false, bio:'Anime + japanese trad. Booking 2026.' },
+    { id:'u16', display_name:'Eden Rojas',        username:'edenroj',        city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false },
+    { id:'u17', display_name:'Aviva Greer',       username:'aviva.g',        city:'Austin, TX',   role:'artist', primary_profile_id:'p9',  is_following:false, bio:'Micro-realism, single sessions.' },
+    { id:'u18', display_name:'Mona Atwood',       username:'monaatw',        city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:true },
+    { id:'u19', display_name:'Yara Najjar',       username:'yara.n',         city:'Austin, TX',   role:'artist', primary_profile_id:'p10', is_following:true,  bio:'Surreal blackwork. Walk-ins Sundays.' },
+    { id:'u20', display_name:'Phoebe Sun',        username:'phoebes',        city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false },
+    { id:'u21', display_name:'Sasha Imani',       username:'sashai',         city:'Austin, TX',   role:'artist', primary_profile_id:'p11', is_following:false, bio:'Watercolor florals. East Riverside.' },
+    { id:'u22', display_name:'Nadya Volkov',      username:'nadyavolk',      city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false },
+    { id:'u23', display_name:'Kayo Tanaka',       username:'kayot',          city:'Austin, TX',   role:'artist', primary_profile_id:'p12', is_following:false, bio:'Irezumi traditional. By referral only.' },
+    { id:'u24', display_name:'Elena Marchetti',   username:'elena.m',        city:'Houston, TX',  role:'client', primary_profile_id:null,  is_following:true },
+    { id:'u25', display_name:'Wren Aldridge',     username:'wrenald',        city:'Austin, TX',   role:'client', primary_profile_id:null,  is_following:false }
+  ];
+  const FRIENDS_IDS    = ['u1','u2','u3','u4','u6','u8','u10','u13','u18','u19','u24','u23','u17','u15','u22','u14','u11','u20'];
+  const FOLLOWING_IDS  = MEMBERS.filter(m => m.is_following).map(m => m.id);
+  const FOLLOWERS_IDS  = MEMBERS.map(m => m.id);
+  const SUGGESTED_IDS  = MEMBERS.filter(m => !m.is_following).slice(0, 6).map(m => m.id);
+  const TOP_IDS        = ['u1','u4','u8','u17','u23','u15','u21','u12'];
+  const byId = (id) => MEMBERS.find(m => m.id === id);
+
+  function avatarGrad(id) {
+    let h = 0; for (let i=0;i<id.length;i++) h = ((h<<5) - h + id.charCodeAt(i)) | 0;
+    const a = Math.abs(h) % 360; const b = (a + 35) % 360;
+    return 'linear-gradient(135deg, hsl(' + a + ',45%,40%), hsl(' + b + ',45%,55%))';
+  }
+  function initials(m) {
+    const s = (m.display_name || m.username || '?').trim();
+    const parts = s.split(/\s+/);
+    return ((parts[0] && parts[0][0] || '') + (parts[1] && parts[1][0] || '')).toUpperCase().slice(0,2);
+  }
+  function renderCard(m) {
+    const isArtist = !!m.primary_profile_id;
+    return '<div class="mc" data-uid="' + m.id + '">' +
+      '<div class="mc-av" style="background:' + avatarGrad(m.id) + '">' + initials(m) + '</div>' +
+      '<div class="mc-info">' +
+        '<div class="mc-name-row"><div class="mc-name">' + m.display_name + '</div>' + (isArtist ? '<div class="mc-badge">Artist</div>' : '') + '</div>' +
+        '<div class="mc-handle">@' + m.username + '</div>' +
+        (m.city ? '<div class="mc-meta">' + m.city + '</div>' : '') +
+      '</div>' +
+      '<button class="mc-follow' + (m.is_following ? ' on' : '') + '" data-fuid="' + m.id + '">' + (m.is_following ? 'Following' : 'Follow') + '</button>' +
+    '</div>';
+  }
+  function renderListByIds(ids, emptyTitle, emptyHint) {
+    if (!ids || !ids.length) return '<div class="ds-empty"><div class="ds-empty-t">' + emptyTitle + '</div><div class="ds-empty-h">' + emptyHint + '</div></div>';
+    return ids.map(id => byId(id)).filter(Boolean).map(renderCard).join('');
+  }
+
+  function injectDiscoverMembers() {
+    const disc = document.getElementById('sc-discover');
+    if (!disc || disc.dataset.dsInjected === '1') return;
+    disc.dataset.dsInjected = '1';
+    disc.dataset.dsMode = 'artists';
+    const toggle = document.createElement('div');
+    toggle.className = 'ds-mode';
+    toggle.innerHTML = '<button class="ds-mode-btn on" data-dsmode="artists">Artists</button><button class="ds-mode-btn" data-dsmode="members">Members</button>';
+    disc.insertBefore(toggle, disc.firstChild);
+    const panel = document.createElement('div');
+    panel.className = 'ds-members';
+    panel.innerHTML = '<div class="ds-members-search-wrap"><span style="color:rgba(245,232,216,.4); font-size:14px;">⌕</span><input id="ds-members-input" placeholder="Search name or handle" autocomplete="off"></div><div id="ds-members-results"></div>';
+    disc.appendChild(panel);
+    renderDiscoverMembers('');
+    toggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('.ds-mode-btn');
+      if (!btn) return;
+      const mode = btn.dataset.dsmode;
+      disc.dataset.dsMode = mode;
+      toggle.querySelectorAll('.ds-mode-btn').forEach(b => b.classList.toggle('on', b.dataset.dsmode === mode));
+    });
+    const input = document.getElementById('ds-members-input');
+    let timer = null;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => renderDiscoverMembers(input.value.trim().toLowerCase()), 180);
+    });
+  }
+  function renderDiscoverMembers(q) {
+    const wrap = document.getElementById('ds-members-results');
+    if (!wrap) return;
+    if (q) {
+      const matched = MEMBERS.filter(m =>
+        (m.display_name || '').toLowerCase().includes(q) ||
+        (m.username || '').toLowerCase().includes(q)
+      ).map(m => m.id);
+      wrap.innerHTML = matched.length === 0
+        ? '<div class="ds-empty"><div class="ds-empty-t">No members found</div><div class="ds-empty-h">No results for &ldquo;' + q + '&rdquo;</div></div>'
+        : matched.map(id => renderCard(byId(id))).join('');
+      return;
+    }
+    wrap.innerHTML =
+      '<div class="ds-section-title">Suggested for you</div>' +
+      SUGGESTED_IDS.map(id => renderCard(byId(id))).join('') +
+      '<div class="ds-section-title">Top members in Austin</div>' +
+      TOP_IDS.map(id => renderCard(byId(id))).join('');
+  }
+
+  let flCurrentMode = 'following';
+  function openFollowList(mode) {
+    flCurrentMode = mode || 'following';
+    renderFollowList();
+    if (typeof S === 'function') S('sc-follow-list');
+  }
+  function renderFollowList() {
+    const titleEl = document.getElementById('fl-title');
+    const listEl = document.getElementById('fl-list');
+    const tabsWrap = document.querySelector('#sc-follow-list .fl-tabs');
+    if (!titleEl || !listEl || !tabsWrap) return;
+    titleEl.textContent = flCurrentMode === 'friends' ? 'Friends' : flCurrentMode === 'following' ? 'Following' : 'Followers';
+    tabsWrap.querySelectorAll('.fl-tab').forEach(b => b.classList.toggle('on', b.dataset.flmode === flCurrentMode));
+    let ids, emptyTitle, emptyHint;
+    if (flCurrentMode === 'friends') { ids = FRIENDS_IDS; emptyTitle = 'No friends yet'; emptyHint = 'Mutual follows will appear here.'; }
+    else if (flCurrentMode === 'following') { ids = FOLLOWING_IDS; emptyTitle = 'Not following anyone yet'; emptyHint = 'Search for members to follow.'; }
+    else { ids = FOLLOWERS_IDS; emptyTitle = 'No followers yet'; emptyHint = 'Share your profile to grow your audience.'; }
+    listEl.innerHTML = renderListByIds(ids, emptyTitle, emptyHint);
+  }
+
+  function openMemberProfile(uid) {
+    const m = byId(uid);
+    if (!m) return;
+    document.getElementById('mp-htitle').textContent = '@' + m.username;
+    const isArtist = !!m.primary_profile_id;
+    document.getElementById('mp-hero').innerHTML =
+      '<div class="mp-av" style="background:' + avatarGrad(m.id) + '">' + initials(m) + '</div>' +
+      '<div class="mp-name-row"><div class="mp-name">' + m.display_name + '</div>' + (isArtist ? '<div class="mc-badge" style="font-size:10px;padding:3px 7px;">Artist</div>' : '') + '</div>' +
+      '<div class="mp-handle">@' + m.username + '</div>' +
+      (m.city ? '<div class="mp-meta">' + m.city + '</div>' : '') +
+      (m.bio ? '<div class="mp-bio">' + m.bio + '</div>' : '') +
+      '<div class="mp-actions">' +
+        '<button class="mp-fbtn' + (m.is_following ? ' on' : '') + '" data-fuid="' + m.id + '">' + (m.is_following ? 'Following' : 'Follow') + '</button>' +
+        (isArtist ? '<button class="mp-vbtn" data-pid="' + m.primary_profile_id + '">View artist page</button>' : '') +
+      '</div>';
+    let h = 0; for (let i=0;i<m.id.length;i++) h = ((h<<5) - h + m.id.charCodeAt(i)) | 0;
+    const fr = Math.abs(h) % 24 + 4;
+    const fg = Math.abs(h >> 3) % 80 + 12;
+    const fl = Math.abs(h >> 6) % 600 + 40;
+    document.getElementById('mp-stats').innerHTML =
+      '<div class="mp-stat" data-mpstat="friends"><div class="mp-stat-v">' + fr + '</div><div class="mp-stat-l">FRIENDS</div></div>' +
+      '<div class="mp-divider"></div>' +
+      '<div class="mp-stat" data-mpstat="following"><div class="mp-stat-v">' + fg + '</div><div class="mp-stat-l">FOLLOWING</div></div>' +
+      '<div class="mp-divider"></div>' +
+      '<div class="mp-stat" data-mpstat="followers"><div class="mp-stat-v">' + fl + '</div><div class="mp-stat-l">FOLLOWERS</div></div>';
+    if (typeof S === 'function') S('sc-member-profile');
+  }
+
+  function wireGlobalHandlers() {
+    document.body.addEventListener('click', (e) => {
+      const fb = e.target.closest('.mc-follow, .mp-fbtn');
+      if (fb) {
+        e.stopPropagation();
+        const uid = fb.dataset.fuid;
+        const m = byId(uid);
+        if (m) {
+          m.is_following = !m.is_following;
+          fb.classList.toggle('on', m.is_following);
+          fb.textContent = m.is_following ? 'Following' : 'Follow';
+        }
+        return;
+      }
+      const card = e.target.closest('.mc');
+      if (card) {
+        const uid = card.dataset.uid;
+        const m = byId(uid);
+        if (m && m.primary_profile_id && typeof S === 'function') { S('sc-artist'); return; }
+        if (m) openMemberProfile(uid);
+        return;
+      }
+      const fltab = e.target.closest('#sc-follow-list .fl-tab');
+      if (fltab) { flCurrentMode = fltab.dataset.flmode; renderFollowList(); return; }
+      const mpst = e.target.closest('#sc-member-profile .mp-stat');
+      if (mpst) { openFollowList(mpst.dataset.mpstat); return; }
+      const vbtn = e.target.closest('#sc-member-profile .mp-vbtn');
+      if (vbtn && typeof S === 'function') { S('sc-artist'); return; }
+    });
+    const statsRow = document.querySelector('#sc-profile .p-stats-row');
+    if (statsRow) {
+      const stats = statsRow.querySelectorAll('.p-stat');
+      const modes = ['friends', 'following', 'followers'];
+      stats.forEach((el, i) => {
+        el.removeAttribute('onclick');
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => openFollowList(modes[i]));
+      });
+    }
+  }
+
+  function init() {
+    injectDiscoverMembers();
+    wireGlobalHandlers();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
 </script>
+
 </body>
 </html>

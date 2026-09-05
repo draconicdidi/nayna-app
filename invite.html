@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Text a client for a review — Nayna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-dim:rgba(201,168,76,.55);--gold-faint:rgba(201,168,76,.12);--ink:#F5E8D8;--ink-dim:rgba(245,232,216,.6);--ink-faint:rgba(245,232,216,.18);--bg:#070506;--bg-card:rgba(255,255,255,.028);--border:rgba(201,168,76,.1);--border-subtle:rgba(255,255,255,.06);--rose:#B5706B}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:520px;margin:0 auto;padding:0 20px 64px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 0 30px}
+.wordmark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:var(--gold);text-decoration:none}
+.who{font-size:12px;color:var(--ink-faint)}
+h1{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:34px;line-height:1.1;margin-bottom:10px}
+.sub{color:var(--ink-dim);font-size:14px;margin-bottom:26px}
+.state{text-align:center;padding:80px 0;color:var(--ink-dim);font-size:14px}
+.state-icon{font-size:32px;margin-bottom:16px;display:block}
+.err{color:var(--rose);font-size:14px;margin-bottom:16px;min-height:1em}
+label.block{display:block;font-size:15px;margin-bottom:8px}
+input[type=text],input[type=tel]{width:100%;padding:13px 14px;font:inherit;font-size:16px;color:var(--ink);background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px}
+input:focus{outline:none;border-color:var(--gold-dim)}
+.field{margin-bottom:20px}
+.btn{display:block;width:100%;padding:15px;background:var(--gold);color:#0a0507;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:.02em;border:0;border-radius:10px;text-align:center;text-decoration:none;cursor:pointer;margin-top:8px}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn.quiet{background:transparent;color:var(--ink-dim);border:1px solid var(--border-subtle);margin-top:12px}
+.box{margin:18px 0 6px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--gold-faint);font-size:15px;white-space:pre-wrap;word-break:break-word}
+.fine{font-size:12px;color:var(--ink-faint);margin-top:16px;line-height:1.5}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--border-subtle);font-size:13px;color:var(--ink-dim)}
+.row a{color:var(--gold-dim);text-decoration:none}
+.footer{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-faint);padding-top:40px}
+.footer a{color:var(--ink-faint);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar"><a href="/" class="wordmark">NAYNA</a><span class="who" id="who"></span></div>
+  <div id="root"><div class="state"><span class="state-icon">✦</span>Loading…</div></div>
+  <footer class="footer"><span>© 2026 Nayna, Inc. · Austin, TX</span><span><a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span></footer>
+</div>
+
+<script>
+const API = 'https://ftwndfuhweylmhovfehd.supabase.co/functions/v1/pages/api/invite/';
+const key = new URLSearchParams(location.search).get('k') || '';
+const root = document.getElementById('root');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let artist = null, sentToday = 0, limit = 30;
+
+function note(title, text) { root.innerHTML = `<h1>${esc(title)}</h1><p class="sub">${esc(text)}</p>`; }
+
+function renderForm(error) {
+  root.innerHTML = `
+    <h1>Text a client for a review</h1>
+    <p class="sub">They get a link that works once — no app to download. Their review lands on your page with their first name.</p>
+    <form id="f">
+      <div class="field"><label class="block" for="phone">Client's mobile number</label>
+        <input type="tel" id="phone" name="phone" inputmode="tel" autocomplete="off" placeholder="(512) 555-0134" required></div>
+      <div class="field"><label class="block" for="first_name">First name</label>
+        <input type="text" id="first_name" name="first_name" maxlength="40" placeholder="Jess" autocapitalize="words"></div>
+      <div class="field"><label class="block" for="service">What you did</label>
+        <input type="text" id="service" name="service" maxlength="60" placeholder="Balayage, lash fill, brow lamination…"></div>
+      <div class="err" id="err">${esc(error || '')}</div>
+      <button class="btn" type="submit" id="submit">Write the text</button>
+      <p class="fine">Only text clients you've actually seen. ${sentToday} of ${limit} today.</p>
+    </form>
+    <div class="row"><span>Your public page</span><a href="${esc(artist.page_url)}" target="_blank" rel="noopener">${esc(artist.page_url.replace('https://', ''))}</a></div>`;
+
+  document.getElementById('f').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    const btn = document.getElementById('submit'); btn.disabled = true; btn.textContent = 'Working…';
+    document.getElementById('err').textContent = '';
+    try {
+      const r = await fetch(API + encodeURIComponent(key), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+      const j = await r.json();
+      if (!r.ok || j.error) throw new Error(j.error || 'Something went wrong.');
+      sentToday = j.sent_today; renderReady(j);
+      window.scrollTo(0, 0);
+    } catch (err) {
+      document.getElementById('err').textContent = err.message;
+      btn.disabled = false; btn.textContent = 'Write the text';
+    }
+  });
+}
+
+function renderReady(j) {
+  root.innerHTML = `
+    <h1>Ready to send</h1>
+    <p class="sub">Tap the button to open Messages with the text filled in, then hit send. ${esc(j.first_name || 'Your client')} can post from the link right away.</p>
+    <div class="box" id="txt">${esc(j.text)}</div>
+    <a class="btn" href="${esc(j.sms_href)}">Open in Messages</a>
+    <button class="btn quiet" type="button" id="copy">Copy the text instead</button>
+    <button class="btn quiet" type="button" id="again">Text another client</button>
+    <p class="fine">The link works once and expires in 14 days. If they lose it, come back here and enter the same number — you'll get the same link until it's used.</p>`;
+  document.getElementById('copy').addEventListener('click', async (e) => {
+    try { await navigator.clipboard.writeText(j.text); e.target.textContent = 'Copied'; } catch (_) { e.target.textContent = 'Select the text above and copy it'; }
+  });
+  document.getElementById('again').addEventListener('click', () => renderForm());
+}
+
+async function load() {
+  if (!key) return note('This link isn’t valid', 'Ask Nayna for a fresh artist link.');
+  try {
+    const r = await fetch(API + encodeURIComponent(key));
+    const d = await r.json();
+    if (!r.ok || d.error) return note('This link isn’t valid', d.error || 'Ask Nayna for a fresh artist link.');
+    artist = d.artist; sentToday = d.sent_today; limit = d.limit;
+    document.getElementById('who').textContent = artist.name;
+    renderForm();
+  } catch (e) {
+    note('Something went wrong', 'Reload the page in a moment.');
+  }
+}
+load();
+</script>
+</body>
+</html>

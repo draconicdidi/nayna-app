@@ -15,6 +15,12 @@
   var artistMatch = path.match(/^\/artist\/([a-zA-Z0-9_.-]+)\/?$/);
   if (artistMatch) { window.location.replace('/artist?u=' + artistMatch[1] + hash); return; }
 
+  var reviewMatch = path.match(/^\/r\/([A-Za-z0-9_-]+)\/?$/);
+  if (reviewMatch) { window.location.replace('/review?t=' + reviewMatch[1]); return; }
+
+  var inviteMatch = path.match(/^\/invite\/([A-Za-z0-9_-]+)\/?$/);
+  if (inviteMatch) { window.location.replace('/invite?k=' + inviteMatch[1]); return; }
+
   var profileMatch = path.match(/^\/p\/([a-zA-Z0-9-]+)\/?$/);
   if (profileMatch) { window.location.replace('/artist?id=' + profileMatch[1] + hash); return; }
 

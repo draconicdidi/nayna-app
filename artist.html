@@ -203,7 +203,7 @@ body::before{
   <!-- Top bar -->
   <div class="topbar">
     <a href="/" class="wordmark">NAYNA</a>
-    <a href="https://testflight.apple.com/join/MCFjeUtN" target="_blank" class="dl-btn">Download the app →</a>
+    <a href="https://apps.apple.com/us/app/nayna/id6761784645" target="_blank" class="dl-btn">Get the app →</a>
   </div>
 
   <!-- Content injected by JS -->
@@ -314,7 +314,7 @@ function renderProfile(a) {
   // Reviews
   const reviewsHtml = `
   <div class="reviews animate animate-d4">
-    <div class="section-title">Verified Reviews (${a.review_count})</div>
+    <div class="section-title">Client reviews (${a.review_count})</div>
     ${a.reviews?.length ? a.reviews.map(r => `
       <div class="review-item">
         <div class="review-header">
@@ -330,6 +330,9 @@ function renderProfile(a) {
       </div>`
     ).join('') : `<div class="no-reviews">No reviews yet — be the first to book.</div>`}
   </div>`;
+
+  const bookHref = a.external_booking_url || a.website || '';
+  const firstName = (a.display_name || a.username || 'the artist').split(' ')[0];
 
   const scoreDisplay = a.nayna_score
     ? `<div class="score-num">${a.nayna_score.toFixed(1)}</div>`
@@ -350,7 +353,7 @@ function renderProfile(a) {
       ${scoreDisplay}
       <div class="score-right">
         <div class="score-label">Nayna Score</div>
-        <div class="score-desc">${scoreLabel(a.nayna_score)} · based on ${a.review_count} verified review${a.review_count !== 1 ? 's' : ''}</div>
+        <div class="score-desc">${scoreLabel(a.nayna_score)} · based on ${a.review_count} client review${a.review_count !== 1 ? 's' : ''}</div>
         <div class="score-stats">
           ${a.booking_count ? `<div class="stat-item"><strong>${a.booking_count}</strong> bookings</div>` : ''}
           ${a.studio_name ? `<div class="stat-item"><strong>${a.studio_name}</strong></div>` : ''}
@@ -364,19 +367,25 @@ function renderProfile(a) {
     ${servicesHtml}
     ${reviewsHtml}
 
+    ${bookHref ? `<div class="cta-block animate animate-d5" style="margin-bottom:12px">
+      <div class="cta-eyebrow">Book directly</div>
+      <div class="cta-title">${firstName} takes bookings here.</div>
+      <a href="${bookHref}" target="_blank" rel="noopener" class="cta-main">Book with ${firstName}</a>
+      <div class="cta-note">Opens ${firstName}'s own booking page · Nayna never takes a cut</div>
+    </div>` : ''}
     <div class="cta-block animate animate-d5">
-      <div class="cta-eyebrow">Book on Nayna</div>
-      <div class="cta-title">Every review is verified.</div>
-      <div class="cta-sub">Nayna connects you with Austin's best beauty artists — backed by real, booking-verified reviews. No fake stars.</div>
-      <a href="https://testflight.apple.com/join/MCFjeUtN" target="_blank" class="cta-main">Download Nayna — iOS Beta</a>
-      <div class="cta-note">Free download · TestFlight required · iOS only for now</div>
+      <div class="cta-eyebrow">On Nayna</div>
+      <div class="cta-title">Reviews from real clients.</div>
+      <div class="cta-sub">Every review on Nayna is tied to a real client's phone number, and verified visits are marked. No anonymous stars.</div>
+      <a href="https://apps.apple.com/us/app/nayna/id6761784645" target="_blank" class="cta-main">Get Nayna on the App Store</a>
+      <div class="cta-note">Free · iPhone</div>
     </div>
   `;
 
   // Update page meta
   document.title = `${a.display_name || a.username} — Nayna`;
   document.querySelector('meta[name="description"]').content =
-    `${a.display_name || a.username} · ${a.profession_label} · Nayna Score ${a.nayna_score?.toFixed(1) || '—'} · ${a.review_count} verified reviews`;
+    `${a.display_name || a.username} · ${a.profession_label} · Nayna Score ${a.nayna_score?.toFixed(1) || '—'} · ${a.review_count} client reviews`;
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
 
   document.getElementById('footer').style.display = 'flex';

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Leave a review — Nayna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-dim:rgba(201,168,76,.55);--gold-faint:rgba(201,168,76,.12);--ink:#F5E8D8;--ink-dim:rgba(245,232,216,.6);--ink-faint:rgba(245,232,216,.18);--bg:#070506;--bg-card:rgba(255,255,255,.028);--border:rgba(201,168,76,.1);--border-subtle:rgba(255,255,255,.06);--rose:#B5706B}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:520px;margin:0 auto;padding:0 20px 64px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 0 30px}
+.wordmark{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:.1em;color:var(--gold);text-decoration:none}
+h1{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:34px;line-height:1.1;margin-bottom:10px}
+.sub{color:var(--ink-dim);font-size:14px;margin-bottom:26px}
+.state{text-align:center;padding:80px 0;color:var(--ink-dim);font-size:14px}
+.state-icon{font-size:32px;margin-bottom:16px;display:block}
+.err{color:var(--rose);font-size:14px;margin-bottom:16px;min-height:1em}
+fieldset{border:0;margin:0 0 22px}
+legend{font-weight:400;font-size:15px;color:var(--ink);margin-bottom:8px}
+legend small{display:block;font-size:13px;color:var(--ink-dim);font-weight:300}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale input{position:absolute;opacity:0;width:0;height:0}
+.scale label{display:flex;align-items:center;justify-content:center;height:42px;border:1px solid var(--border-subtle);border-radius:8px;cursor:pointer;font-size:14px;color:var(--ink-dim);background:var(--bg-card)}
+.scale input:checked+label{background:var(--gold);color:#0a0507;border-color:var(--gold);font-weight:500}
+.scale input:focus-visible+label{outline:2px solid var(--ink);outline-offset:2px}
+label.block{display:block;font-size:15px;margin-bottom:8px}
+textarea,input[type=text]{width:100%;padding:13px 14px;font:inherit;font-size:16px;color:var(--ink);background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px}
+textarea{min-height:120px;resize:vertical}
+textarea:focus,input:focus{outline:none;border-color:var(--gold-dim)}
+.field{margin-bottom:20px}.hint{font-size:12px;color:var(--ink-faint);margin-top:6px}
+.btn{display:block;width:100%;padding:15px;background:var(--gold);color:#0a0507;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:.02em;border:0;border-radius:10px;text-align:center;text-decoration:none;cursor:pointer;margin-top:8px}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn.quiet{background:transparent;color:var(--ink-dim);border:1px solid var(--border-subtle);margin-top:12px}
+.fine{font-size:12px;color:var(--ink-faint);margin-top:16px;line-height:1.5}
+.footer{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-faint);padding-top:40px}
+.footer a{color:var(--ink-faint);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar"><a href="/" class="wordmark">NAYNA</a></div>
+  <div id="root"><div class="state"><span class="state-icon">✦</span>Loading…</div></div>
+  <footer class="footer"><span>© 2026 Nayna, Inc. · Austin, TX</span><span><a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span></footer>
+</div>
+
+<script>
+const API = 'https://ftwndfuhweylmhovfehd.supabase.co/functions/v1/pages/api/review/';
+const APP = 'https://apps.apple.com/us/app/nayna/id6761784645';
+const token = new URLSearchParams(location.search).get('t') || '';
+const root = document.getElementById('root');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function note(title, text, cta) {
+  root.innerHTML = `<h1>${esc(title)}</h1><p class="sub">${esc(text)}</p>${cta ? `<a class="btn" href="${esc(cta.href)}">${esc(cta.label)}</a>` : ''}`;
+}
+function scale(name, label, hint) {
+  let cells = '';
+  for (let i = 1; i <= 10; i++) cells += `<input type="radio" name="score_${name}" value="${i}" id="${name}${i}" ${i === 1 ? 'required' : ''}><label for="${name}${i}">${i}</label>`;
+  return `<fieldset><legend>${label}<small>${hint}</small></legend><div class="scale">${cells}</div></fieldset>`;
+}
+
+function renderForm(d) {
+  const a = d.artist;
+  root.innerHTML = `
+    <h1>How was ${esc(d.service_name || 'your visit')} with ${esc(a.name)}?</h1>
+    <p class="sub">Four quick scores out of 10 and a sentence or two. It shows on ${esc(a.first_name)}'s page with your first name only.</p>
+    <form id="f">
+      ${scale('skill', 'Skill', 'How good was the work itself?')}
+      ${scale('comms', 'Communication', 'Clear about what to expect, easy to reach?')}
+      ${scale('timing', 'Timing', 'On time, and the right amount of time?')}
+      ${scale('value', 'Value', 'Worth what you paid?')}
+      <div class="field"><label class="block" for="body">What should someone know before booking?</label>
+        <textarea id="body" name="body" minlength="10" maxlength="1200" required placeholder="What you got done, what you loved, anything to expect."></textarea></div>
+      <div class="field"><label class="block" for="first_name">Your first name</label>
+        <input type="text" id="first_name" name="first_name" maxlength="40" value="${esc(d.first_name || '')}" autocomplete="given-name">
+        <div class="hint">Shown with your review. Leave blank to post as "A client".</div></div>
+      <div class="err" id="err"></div>
+      <button class="btn" type="submit" id="submit">Post my review</button>
+      <p class="fine">${esc(a.first_name)} sent this link to your phone. It works once and expires in 14 days.</p>
+    </form>`;
+
+  document.getElementById('f').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
+    const btn = document.getElementById('submit'); btn.disabled = true; btn.textContent = 'Posting…';
+    document.getElementById('err').textContent = '';
+    try {
+      const r = await fetch(API + encodeURIComponent(token), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+      const j = await r.json();
+      if (!r.ok || j.error) throw new Error(j.error || 'Something went wrong.');
+      note('Posted. Thank you.', `${j.artist.first_name} will see your review right away.`, { href: j.artist.page_url, label: `See ${j.artist.first_name}'s page` });
+      root.insertAdjacentHTML('beforeend', `<a class="btn quiet" href="${APP}">Find more artists on Nayna</a>`);
+      window.scrollTo(0, 0);
+    } catch (err) {
+      document.getElementById('err').textContent = err.message;
+      btn.disabled = false; btn.textContent = 'Post my review';
+    }
+  });
+}
+
+async function load() {
+  if (!token) return note('This link isn’t valid', 'Ask your artist to send a new review link.');
+  try {
+    const r = await fetch(API + encodeURIComponent(token));
+    const d = await r.json();
+    if (d.status === 'open') return renderForm(d);
+    if (d.status === 'completed') return note('You already posted this review', `Thanks for reviewing ${d.artist.name}.`, { href: d.artist.page_url, label: `See ${d.artist.first_name}'s page` });
+    if (d.status === 'expired') return note('This link has expired', 'Review links last 14 days. Ask your artist for a fresh one.');
+    note('This link isn’t valid', 'Ask your artist to send a new review link.');
+  } catch (e) {
+    note('Something went wrong', 'Try the link again in a moment.');
+  }
+}
+load();
+</script>
+</body>
+</html>
